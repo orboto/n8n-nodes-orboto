@@ -82,6 +82,26 @@ export async function resolveTicketId(
 	return found.id;
 }
 
+/**
+ * Resolves a user-supplied milestone reference (UUID or key like `M-3`)
+ * to the milestone id. UUIDs pass through untouched.
+ */
+export async function resolveMilestoneId(
+	client: ApiClient,
+	projectId: string,
+	milestone: string,
+): Promise<string> {
+	const value = milestone.trim();
+	if (isUuid(value)) return value;
+	if (!projectId) {
+		throw new Error('A project is required to resolve a milestone key to an id');
+	}
+	const found = await client.request<{ id: string }>(
+		`/projects/${encodeURIComponent(projectId)}/milestones/by-key/${encodeURIComponent(value)}`,
+	);
+	return found.id;
+}
+
 /** Wraps API failures into n8n errors with actionable descriptions. */
 export function toNodeError(node: INode, error: unknown, itemIndex: number): Error {
 	if (error instanceof NodeApiError || error instanceof NodeOperationError) return error;

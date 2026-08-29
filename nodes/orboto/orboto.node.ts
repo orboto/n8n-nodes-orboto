@@ -6,6 +6,8 @@ import type {
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import { executeTicketOperation, ticketOperations } from './resources/ticket/Ticket.resource';
+import { executeMilestoneOperation, milestoneOperations } from './resources/milestone/milestone.resource';
+import { executeProjectOperation, projectOperations } from './resources/project/project.resource';
 import {
 	getLabels,
 	getLabelNames,
@@ -44,6 +46,14 @@ export class orboto implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
+				{
+					name: 'Milestone',
+					value: 'milestone',
+				},
+				{
+					name: 'Project',
+					value: 'project',
+				},
 					{
 						name: 'Ticket',
 						value: 'ticket',
@@ -53,6 +63,8 @@ export class orboto implements INodeType {
 				required: true,
 			},
 			...ticketOperations,
+			...milestoneOperations,
+			...projectOperations,
 		],
 	};
 
@@ -77,6 +89,10 @@ export class orboto implements INodeType {
 			try {
 				if (resource === 'ticket') {
 					responseData.push(...(await executeTicketOperation(this, itemIndex)));
+				} else if (resource === 'milestone') {
+					responseData.push(...(await executeMilestoneOperation(this, itemIndex)));
+				} else if (resource === 'project') {
+					responseData.push(...(await executeProjectOperation(this, itemIndex)));
 				} else {
 					throw new NodeOperationError(this.getNode(), `Unknown resource: ${resource}`, {
 						itemIndex,
