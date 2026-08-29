@@ -35,7 +35,9 @@
     "credentials": [
       "dist/credentials/orbotoApi.credentials.js"
     ],
-    "nodes": []
+    "nodes": [
+      "dist/nodes/orboto/orboto.node.js"
+    ]
   },
   "scripts": {
     "build": "tsc && gulp build:icons",

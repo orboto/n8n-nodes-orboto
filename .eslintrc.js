@@ -11,6 +11,10 @@ module.exports = {
 		// Main-repo-only rule misfiring on community packages: it camelCases the
 		// URL *value*, which would corrupt a GitHub readme link.
 		'n8n-nodes-base/cred-class-field-documentation-url-miscased': 'off',
+		// Same brand override: the node class and file are lowercase 'orboto'
+		// (matching description.name), which this rule's title-case heuristic
+		// rejects. Reported to the coordinator instead of reverting.
+		'n8n-nodes-base/node-filename-against-convention': 'off',
 	},
 	env: {
 		node: true,

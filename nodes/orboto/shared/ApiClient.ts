@@ -77,13 +77,10 @@ export class ApiError extends Error {
 		// n8n's httpRequest attaches the parsed body as `response.body` on thrown
 		// errors; plain transports may use `body` or `description` instead.
 		const response = (record.response ?? {}) as Record<string, unknown>;
-		const body = (response.body ?? record.body ?? record.description) as unknown;
-		const explicitStatus = typeof record.statusCode === 'number' ? record.statusCode : undefined;
-		const statusCode =
-			typeof record.code === 'number' && record.code >= 400 && record.code <= 599
-				? record.code
-				: undefined;
-		const status = explicitStatus ?? statusCode ?? 0;
+		const cause = (record.cause ?? {}) as Record<string, unknown>;
+		const causeResponse = (cause.response ?? {}) as Record<string, unknown>;
+		const body = (response.body ?? causeResponse.body ?? record.body ?? record.description) as unknown;
+		const status = extractStatus(error, record, response);
 		if (status > 0 && body && typeof body === 'object') {
 			return ApiError.fromErrorBody(status, body);
 		}
@@ -109,6 +106,39 @@ export class ApiError extends Error {
 	isAuthError(): boolean {
 		return this.status === 401 || this.status === 403;
 	}
+}
+
+/**
+ * Status extraction across transport error shapes: explicit statusCode/code
+ * fields, n8n's httpCode / context.data.status / cause.response.status
+ * (the same fields n8n's own credential tester reads), and finally the
+ * 'status code NNN' pattern inside the message.
+ */
+function extractStatus(
+	error: unknown,
+	record: Record<string, unknown>,
+	response: Record<string, unknown>,
+): number {
+	if (typeof record.statusCode === 'number') return record.statusCode;
+	if (typeof record.code === 'number' && record.code >= 400 && record.code <= 599) {
+		return record.code;
+	}
+	if (typeof record.httpCode === 'string' && /^\d+$/.test(record.httpCode)) {
+		return Number(record.httpCode);
+	}
+	if (typeof record.httpCode === 'number') return record.httpCode;
+	const context = (record.context ?? {}) as Record<string, unknown>;
+	const contextData = (context.data ?? {}) as Record<string, unknown>;
+	if (typeof contextData.status === 'number') return contextData.status;
+	const cause = (record.cause ?? {}) as Record<string, unknown>;
+	const causeResponse = (cause.response ?? {}) as Record<string, unknown>;
+	if (typeof causeResponse.status === 'number') return causeResponse.status;
+	if (typeof response.status === 'number') return response.status;
+	if (typeof record.message === 'string') {
+		const match = /status code (\d{3})/.exec(record.message);
+		if (match) return Number(match[1]);
+	}
+	return 0;
 }
 
 export interface RequestOptions {

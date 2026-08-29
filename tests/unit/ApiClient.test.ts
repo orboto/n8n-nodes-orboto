@@ -192,6 +192,33 @@ describe('ApiError mapping', () => {
 		const original = new ApiError({ status: 409, code: 'errors.duplicate', message: 'dup' });
 		expect(ApiError.fromTransportError(original)).toBe(original);
 	});
+
+	it('extracts the status from n8n-style errors (httpCode, cause.response.status, message pattern)', () => {
+		const make = (props: Record<string, unknown>): Error =>
+			Object.assign(new Error('boom'), props);
+
+		const fromHttpCode = ApiError.fromTransportError(make({ httpCode: '422' })) as ApiError;
+		expect(fromHttpCode.status).toBe(422);
+
+		const fromCause = ApiError.fromTransportError(
+			make({ message: 'Request failed', cause: { response: { status: 429 } } }),
+		) as ApiError;
+		expect(fromCause.status).toBe(429);
+
+		const fromMessage = ApiError.fromTransportError(
+			make({ message: 'Request failed with status code 423' }),
+		) as ApiError;
+		expect(fromMessage.status).toBe(423);
+	});
+
+	it('maps the body from cause.response.body when present', () => {
+		const error = Object.assign(new Error('bad'), {
+			cause: { response: { status: 409, body: { error: 'Duplicate', errorKey: 'errors.tickets.duplicate' } } },
+		});
+		const mapped = ApiError.fromTransportError(error) as ApiError;
+		expect(mapped.status).toBe(409);
+		expect(mapped.code).toBe('errors.tickets.duplicate');
+	});
 });
 
 describe('ApiClient.paginate', () => {
