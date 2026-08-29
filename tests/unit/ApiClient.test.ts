@@ -61,10 +61,11 @@ describe('ApiClient construction', () => {
 		);
 	});
 
-	it('requires an apiKey', () => {
-		expect(() => new ApiClient({ baseUrl: 'https://x.example.com', apiKey: '' }, fakeTransport(() => ({})))).toThrow(
-			'missing an apiKey',
-		);
+	it('omits the Authorization header when the transport owns auth (empty apiKey)', async () => {
+		const transport = vi.fn(fakeTransport(() => ({})));
+		const client = new ApiClient({ baseUrl: 'https://x.example.com', apiKey: '' }, transport);
+		await client.request('/x');
+		expect(transport.mock.calls[0][0].headers).not.toHaveProperty('authorization');
 	});
 });
 

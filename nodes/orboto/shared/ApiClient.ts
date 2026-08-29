@@ -179,11 +179,10 @@ export class ApiClient {
 		if (!credentials?.baseUrl) {
 			throw new Error('orboto credentials are missing a baseUrl');
 		}
-		if (!credentials?.apiKey) {
-			throw new Error('orboto credentials are missing an apiKey');
-		}
+		// An empty apiKey is valid when the transport owns authentication
+		// (n8n's httpRequestWithAuthentication injects and refreshes OAuth tokens).
 		this.baseUrl = ApiClient.normalizeBaseUrl(credentials.baseUrl);
-		this.apiKey = credentials.apiKey;
+		this.apiKey = credentials.apiKey ?? '';
 		this.transport = transport;
 	}
 
@@ -214,14 +213,15 @@ export class ApiClient {
 
 	/** Performs a single API call and returns the parsed response body. */
 	async request<T = unknown>(path: string, options: RequestOptions = {}): Promise<T> {
+		const headers: Record<string, string> = {
+			accept: 'application/json',
+			...(this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {}),
+			...options.headers,
+		};
 		const request: TransportRequest = {
 			method: options.method ?? 'GET',
 			url: this.buildUrl(path, options.query),
-			headers: {
-				accept: 'application/json',
-				authorization: `Bearer ${this.apiKey}`,
-				...options.headers,
-			},
+			headers,
 		};
 		if (options.body !== undefined) request.body = options.body;
 

@@ -5,9 +5,44 @@ import type { ApiPage, QueryValue } from './Types';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Builds the shared API client from the node's orbotoApi credential. */
+/** Credential names the nodes accept (API key or OAuth2). */
+export const CREDENTIAL_TYPES = ['orbotoApi', 'orbotoOAuth2Api'] as const;
+
+/**
+ * Reads whichever orboto credential the node is configured with. For OAuth2
+ * credentials the bearer token comes from n8n's oauthTokenData (refreshed by
+ * n8n via the offline_access scope); for API-key credentials it is the key.
+ */
+async function getCredentialsData(
+	context: { getCredentials(name: string): Promise<Record<string, unknown>>; getNode(): { credentials?: Record<string, unknown> } },
+): Promise<{ baseUrl: string; apiKey: string }> {
+	const configured = context.getNode().credentials ?? {};
+	const type = CREDENTIAL_TYPES.find((name) => Boolean(configured[name])) ?? 'orbotoApi';
+	const credentials = await context.getCredentials(type);
+	const oauthToken = credentials.oauthTokenData as { access_token?: string } | undefined;
+	return {
+		baseUrl: String(credentials.baseUrl ?? ''),
+		apiKey: String(oauthToken?.access_token ?? credentials.apiKey ?? ''),
+	};
+}
+
+/** Builds the shared API client from the node's orboto credential (API key or OAuth2). */
 export async function getClient(executeContext: IExecuteFunctions): Promise<ApiClient> {
-	const credentials = await executeContext.getCredentials('orbotoApi');
+	const configured = executeContext.getNode().credentials ?? {};
+	const type = CREDENTIAL_TYPES.find((name) => Boolean(configured[name])) ?? 'orbotoApi';
+	const credentials = await executeContext.getCredentials(type);
+	if (type === 'orbotoOAuth2Api') {
+		// OAuth: let n8n inject and refresh the bearer token - an empty apiKey
+		// keeps ApiClient from setting its own Authorization header.
+		return new ApiClient({ baseUrl: String(credentials.baseUrl ?? '') }, (request) =>
+			executeContext.helpers.httpRequestWithAuthentication.call(executeContext, 'orbotoOAuth2Api', {
+				method: request.method,
+				url: request.url,
+				headers: request.headers,
+				body: request.body,
+			} as IHttpRequestOptions),
+		);
+	}
 	return new ApiClient(
 		{
 			baseUrl: String(credentials.baseUrl ?? ''),
@@ -27,9 +62,12 @@ export async function getClient(executeContext: IExecuteFunctions): Promise<ApiC
 export async function getLoadOptionsClient(
 	context: { getCredentials(name: string): Promise<Record<string, unknown>> } & {
 		helpers: { httpRequest(options: IHttpRequestOptions): Promise<unknown> };
+		getNode?(): { credentials?: Record<string, unknown> };
 	},
 ): Promise<ApiClient> {
-	const credentials = await context.getCredentials('orbotoApi');
+	const credentials = await getCredentialsData(
+		context as unknown as Parameters<typeof getCredentialsData>[0],
+	);
 	return new ApiClient(
 		{
 			baseUrl: String(credentials.baseUrl ?? ''),

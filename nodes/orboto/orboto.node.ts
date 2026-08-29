@@ -49,6 +49,16 @@ export class orboto implements INodeType {
 			{
 				name: 'orbotoApi',
 				required: true,
+				displayOptions: {
+					show: {},
+				},
+			},
+			{
+				name: 'orbotoOAuth2Api',
+				required: true,
+				displayOptions: {
+					show: {},
+				},
 			},
 		],
 		properties: [

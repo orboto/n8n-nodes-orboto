@@ -10,8 +10,8 @@
 export interface ApiCredentials {
 	/** Base URL of the orboto API, e.g. `https://orboto.example.com/api`. */
 	baseUrl: string;
-	/** Bearer token used for the `Authorization` header. */
-	apiKey: string;
+	/** Bearer token used for the `Authorization` header. Empty when the transport owns auth (OAuth via n8n). */
+	apiKey?: string;
 }
 
 /** Cursor-paginated list envelope returned by every orboto list route. */
