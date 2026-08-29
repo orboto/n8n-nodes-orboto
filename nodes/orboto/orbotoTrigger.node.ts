@@ -71,14 +71,18 @@ export class orbotoTrigger implements INodeType {
 				name: 'orbotoApi',
 				required: true,
 				displayOptions: {
-					show: {},
+					show: {
+						authType: ['apiKey'],
+					},
 				},
 			},
 			{
 				name: 'orbotoOAuth2Api',
 				required: true,
 				displayOptions: {
-					show: {},
+					show: {
+						authType: ['oauth'],
+					},
 				},
 			},
 		],
@@ -91,6 +95,24 @@ export class orbotoTrigger implements INodeType {
 			} satisfies IWebhookDescription,
 		],
 		properties: [
+			{
+				displayName: 'Authentication',
+				name: 'authType',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'API Key',
+						value: 'apiKey',
+					},
+					{
+						name: 'OAuth2',
+						value: 'oauth',
+					},
+				],
+				default: 'apiKey',
+				description: 'Which orboto credential style this node uses',
+			},
 			{
 				displayName: 'Project Name or ID',
 				name: 'project',

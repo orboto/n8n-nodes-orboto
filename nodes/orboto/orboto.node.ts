@@ -50,18 +50,40 @@ export class orboto implements INodeType {
 				name: 'orbotoApi',
 				required: true,
 				displayOptions: {
-					show: {},
+					show: {
+						authType: ['apiKey'],
+					},
 				},
 			},
 			{
 				name: 'orbotoOAuth2Api',
 				required: true,
 				displayOptions: {
-					show: {},
+					show: {
+						authType: ['oauth'],
+					},
 				},
 			},
 		],
 		properties: [
+			{
+				displayName: 'Authentication',
+				name: 'authType',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'API Key',
+						value: 'apiKey',
+					},
+					{
+						name: 'OAuth2',
+						value: 'oauth',
+					},
+				],
+				default: 'apiKey',
+				description: 'Which orboto credential style this node uses',
+			},
 			{
 				displayName: 'Resource',
 				name: 'resource',

@@ -1,0 +1,46 @@
+{
+  "name": "orboto: notify on ticket.created",
+  "nodes": [
+    {
+      "parameters": {
+        "project": "YOUR_PROJECT_ID",
+        "events": ["ticket.created"],
+        "additionalEvents": ""
+      },
+      "id": "b2000000-0000-4000-8000-000000000001",
+      "name": "orboto Trigger",
+      "type": "n8n-nodes-orboto.orbotoTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "webhookId": "00000000-2000-4000-8000-000000000001",
+      "credentials": {
+        "orbotoApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "orboto API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://your-channel-webhook.example.com/incoming",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: `New ticket ${$json.ticketKey || $json.id}: ${$json.title}` }) }}",
+        "options": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000002",
+      "name": "Notify channel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    }
+  ],
+  "connections": {
+    "orboto Trigger": {
+      "main": [[{ "node": "Notify channel", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

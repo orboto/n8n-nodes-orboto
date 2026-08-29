@@ -1,0 +1,78 @@
+{
+  "name": "orboto: nightly OQL digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 6 * * 1-5" }]
+        }
+      },
+      "id": "c3000000-0000-4000-8000-000000000001",
+      "name": "Every weekday 06:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "ticket",
+        "operation": "query",
+        "oql": "project = YOUR_PROJECT_KEY and status = TODO and priority in (blocker, high) order by priority",
+        "syntax": "oql",
+        "returnAll": true
+      },
+      "id": "c3000000-0000-4000-8000-000000000002",
+      "name": "Query open blockers",
+      "type": "n8n-nodes-orboto.orboto",
+      "typeVersion": 1,
+      "position": [220, 0],
+      "credentials": {
+        "orbotoApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "orboto API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "duplicateItem": false,
+        "options": {}
+      },
+      "id": "c3000000-0000-4000-8000-000000000003",
+      "name": "Aggregate items",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://your-digest-endpoint.example.com/orboto",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ count: $json.json ? $json.json.length : 0, digest: $json.json }) }}",
+        "options": {}
+      },
+      "id": "c3000000-0000-4000-8000-000000000004",
+      "name": "Send digest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    }
+  ],
+  "connections": {
+    "Every weekday 06:00": {
+      "main": [[{ "node": "Query open blockers", "type": "main", "index": 0 }]]
+    },
+    "Query open blockers": {
+      "main": [[{ "node": "Aggregate items", "type": "main", "index": 0 }]]
+    },
+    "Aggregate items": {
+      "main": [[{ "node": "Send digest", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

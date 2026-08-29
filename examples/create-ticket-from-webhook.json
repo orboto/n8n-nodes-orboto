@@ -1,0 +1,64 @@
+{
+  "name": "orboto: create ticket from webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "orboto-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Inbound webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "00000000-1000-4000-8000-000000000001"
+    },
+    {
+      "parameters": {
+        "resource": "ticket",
+        "operation": "create",
+        "project": "YOUR_PROJECT_ID",
+        "title": "={{ $json.subject || $json.title || 'Inbound request' }}",
+        "description": "={{ $json.body || $json.text || '' }}",
+        "priority": "={{ $json.urgent ? 'blocker' : 'normal' }}",
+        "labelNames": ["inbound"]
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Create orboto ticket",
+      "type": "n8n-nodes-orboto.orboto",
+      "typeVersion": 1,
+      "position": [220, 0],
+      "credentials": {
+        "orbotoApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "orboto API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { created: $json.ticketKey, similarWarnings: $json.similarWarnings?.length ?? 0 } }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [440, 0]
+    }
+  ],
+  "connections": {
+    "Inbound webhook": {
+      "main": [[{ "node": "Create orboto ticket", "type": "main", "index": 0 }]]
+    },
+    "Create orboto ticket": {
+      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

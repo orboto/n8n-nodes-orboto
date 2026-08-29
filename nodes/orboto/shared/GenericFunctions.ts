@@ -5,31 +5,17 @@ import type { ApiPage, QueryValue } from './Types';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Credential names the nodes accept (API key or OAuth2). */
-export const CREDENTIAL_TYPES = ['orbotoApi', 'orbotoOAuth2Api'] as const;
-
-/**
- * Reads whichever orboto credential the node is configured with. For OAuth2
- * credentials the bearer token comes from n8n's oauthTokenData (refreshed by
- * n8n via the offline_access scope); for API-key credentials it is the key.
- */
-async function getCredentialsData(
-	context: { getCredentials(name: string): Promise<Record<string, unknown>>; getNode(): { credentials?: Record<string, unknown> } },
-): Promise<{ baseUrl: string; apiKey: string }> {
-	const configured = context.getNode().credentials ?? {};
-	const type = CREDENTIAL_TYPES.find((name) => Boolean(configured[name])) ?? 'orbotoApi';
-	const credentials = await context.getCredentials(type);
-	const oauthToken = credentials.oauthTokenData as { access_token?: string } | undefined;
-	return {
-		baseUrl: String(credentials.baseUrl ?? ''),
-		apiKey: String(oauthToken?.access_token ?? credentials.apiKey ?? ''),
-	};
+/** Resolves the credential type from the Authentication parameter (apiKey | oauth). */
+export function credentialTypeOf(
+	context: { getNodeParameter(name: string, itemIndex?: number, fallback?: unknown): unknown },
+): 'orbotoApi' | 'orbotoOAuth2Api' {
+	const authType = String(context.getNodeParameter('authType', 0, 'apiKey'));
+	return authType === 'oauth' ? 'orbotoOAuth2Api' : 'orbotoApi';
 }
 
 /** Builds the shared API client from the node's orboto credential (API key or OAuth2). */
 export async function getClient(executeContext: IExecuteFunctions): Promise<ApiClient> {
-	const configured = executeContext.getNode().credentials ?? {};
-	const type = CREDENTIAL_TYPES.find((name) => Boolean(configured[name])) ?? 'orbotoApi';
+	const type = credentialTypeOf(executeContext);
 	const credentials = await executeContext.getCredentials(type);
 	if (type === 'orbotoOAuth2Api') {
 		// OAuth: let n8n inject and refresh the bearer token - an empty apiKey
@@ -60,18 +46,20 @@ export async function getClient(executeContext: IExecuteFunctions): Promise<ApiC
 
 /** Client for loadOptions methods (same transport, different context type). */
 export async function getLoadOptionsClient(
-	context: { getCredentials(name: string): Promise<Record<string, unknown>> } & {
+	context: {
+		getCredentials(name: string): Promise<Record<string, unknown>>;
+		getNodeParameter(name: string, itemIndex?: number, fallback?: unknown): unknown;
+	} & {
 		helpers: { httpRequest(options: IHttpRequestOptions): Promise<unknown> };
-		getNode?(): { credentials?: Record<string, unknown> };
 	},
 ): Promise<ApiClient> {
-	const credentials = await getCredentialsData(
-		context as unknown as Parameters<typeof getCredentialsData>[0],
-	);
+	const type = credentialTypeOf(context);
+	const credentials = await context.getCredentials(type);
+	const oauthToken = credentials.oauthTokenData as { access_token?: string } | undefined;
 	return new ApiClient(
 		{
 			baseUrl: String(credentials.baseUrl ?? ''),
-			apiKey: String(credentials.apiKey ?? ''),
+			apiKey: String(oauthToken?.access_token ?? credentials.apiKey ?? ''),
 		},
 		(request) =>
 			context.helpers.httpRequest({

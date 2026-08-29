@@ -1,0 +1,134 @@
+{
+  "name": "orboto: sync ticket with external system",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## orboto <-> external ticket sync\n\n**Outbound (top):** the orboto Trigger fires on `ticket.created` / `ticket.updated` and upserts the ticket into the external system. Replace the URL and body mapping with your system's API.\n\n**Inbound (bottom):** the external system POSTs changes to the webhook. The IF node drops callbacks that originated from this sync (`source = orboto-n8n-sync`) so the two directions cannot loop. The orboto node then updates only the fields listed under **Update Fields** - everything else on the ticket stays untouched.\n\nSet `YOUR_PROJECT_ID`, point both HTTP nodes at your system, and connect an orboto credential (API key or OAuth2).",
+        "height": 420,
+        "width": 460,
+        "color": 4
+      },
+      "id": "d4000000-0000-4000-8000-000000000000",
+      "name": "How this works",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-460, -160]
+    },
+    {
+      "parameters": {
+        "project": "YOUR_PROJECT_ID",
+        "events": ["ticket.created", "ticket.updated"],
+        "additionalEvents": ""
+      },
+      "id": "d4000000-0000-4000-8000-000000000001",
+      "name": "orboto Trigger",
+      "type": "n8n-nodes-orboto.orbotoTrigger",
+      "typeVersion": 1,
+      "position": [0, -120],
+      "webhookId": "00000000-4000-4000-8000-000000000001",
+      "credentials": {
+        "orbotoApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "orboto API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://external.example.com/api/issues/upsert",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "X-Source", "value": "orboto-n8n-sync" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ externalKey: $json.ticketKey || $json.id, title: $json.title, status: $json.statusName || $json.status, priority: $json.priority, updatedAt: $json.updatedAt, source: 'orboto-n8n-sync' }) }}",
+        "options": {}
+      },
+      "id": "d4000000-0000-4000-8000-000000000002",
+      "name": "Upsert external issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, -120],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "orboto-external-sync",
+        "options": {}
+      },
+      "id": "d4000000-0000-4000-8000-000000000003",
+      "name": "External change webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 140],
+      "webhookId": "00000000-4000-4000-8000-000000000002"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d4000000-0000-4000-8000-000000000010",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "orboto-n8n-sync",
+              "operator": { "type": "string", "operation": "notEquals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4000000-0000-4000-8000-000000000004",
+      "name": "Not our own echo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [240, 140]
+    },
+    {
+      "parameters": {
+        "resource": "ticket",
+        "operation": "update",
+        "project": "YOUR_PROJECT_ID",
+        "ticket": "={{ $json.ticketKey }}",
+        "updateFields": {
+          "description": "={{ $json.description }}",
+          "priority": "={{ $json.priority }}"
+        }
+      },
+      "id": "d4000000-0000-4000-8000-000000000005",
+      "name": "Update orboto ticket",
+      "type": "n8n-nodes-orboto.orboto",
+      "typeVersion": 1,
+      "position": [480, 140],
+      "credentials": {
+        "orbotoApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "orboto API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "orboto Trigger": {
+      "main": [[{ "node": "Upsert external issue", "type": "main", "index": 0 }]]
+    },
+    "External change webhook": {
+      "main": [[{ "node": "Not our own echo?", "type": "main", "index": 0 }]]
+    },
+    "Not our own echo?": {
+      "main": [[{ "node": "Update orboto ticket", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

@@ -125,7 +125,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'description',
 		type: 'string',
 		typeOptions: { rows: 6 },
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: '',
 		description: 'Ticket description (Markdown)',
 	},
@@ -134,7 +134,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'type',
 		type: 'options',
 		options: ['epic', 'story', 'task', 'bug'].map((v) => ({ name: v, value: v })),
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: 'task',
 		description: 'Ticket type',
 	},
@@ -143,7 +143,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'priority',
 		type: 'options',
 		options: ['blocker', 'high', 'normal', 'low', 'trivial'].map((v) => ({ name: v, value: v })),
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: 'normal',
 		description: 'Ticket priority',
 	},
@@ -152,7 +152,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'statusId',
 		type: 'options',
 		typeOptions: { loadOptionsMethod: 'getStatuses' },
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update', 'move'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'move'] } },
 		default: '',
 		description: 'Status to set (statuses come from the project). Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
@@ -161,7 +161,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'milestoneId',
 		type: 'options',
 		typeOptions: { loadOptionsMethod: 'getMilestones' },
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update', 'setMilestone'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'setMilestone'] } },
 		default: '',
 		description: 'Milestone of the ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
@@ -170,7 +170,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'versionId',
 		type: 'options',
 		typeOptions: { loadOptionsMethod: 'getVersions' },
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update', 'setVersion'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'setVersion'] } },
 		default: '',
 		description: 'Version of the ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
@@ -179,7 +179,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'labelNames',
 		type: 'multiOptions',
 		typeOptions: { loadOptionsMethod: 'getLabelNames' },
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: [],
 		description: 'Labels to attach. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
@@ -187,7 +187,7 @@ export const ticketOperations: INodeProperties[] = [
 		displayName: 'Assignee Emails',
 		name: 'assigneeEmails',
 		type: 'string',
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: '',
 		description: 'Comma-separated email addresses to assign',
 	},
@@ -195,7 +195,7 @@ export const ticketOperations: INodeProperties[] = [
 		displayName: 'Parent Ticket',
 		name: 'parentTicketId',
 		type: 'string',
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: '',
 		description: 'Parent ticket key or ID for sub-tickets',
 	},
@@ -204,7 +204,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'startDate',
 		type: 'string',
 		placeholder: 'YYYY-MM-DD',
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: '',
 		description: 'Planned start date (YYYY-MM-DD)',
 	},
@@ -213,7 +213,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'dueDate',
 		type: 'string',
 		placeholder: 'YYYY-MM-DD',
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: '',
 		description: 'Due date (YYYY-MM-DD)',
 	},
@@ -222,7 +222,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'estimatedTimeMinutes',
 		type: 'number',
 		typeOptions: { numberPrecision: 0 },
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: 0,
 		description: 'Estimated effort in minutes',
 	},
@@ -230,7 +230,7 @@ export const ticketOperations: INodeProperties[] = [
 		displayName: 'Private',
 		name: 'isPrivate',
 		type: 'boolean',
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: false,
 		description: 'Whether the ticket is only visible to team members with access',
 	},
@@ -239,7 +239,7 @@ export const ticketOperations: INodeProperties[] = [
 		name: 'deliveryMode',
 		type: 'options',
 		options: ['implementation', 'docs', 'review', 'admin', 'epic'].map((v) => ({ name: v, value: v })),
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: 'implementation',
 		description: 'Delivery mode of the ticket',
 	},
@@ -247,9 +247,138 @@ export const ticketOperations: INodeProperties[] = [
 		displayName: 'Skip Auto-Translate',
 		name: 'skipAutoTranslate',
 		type: 'boolean',
-		displayOptions: { show: { ...SHOW_TICKET, operation: ['create', 'update'] } },
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['create'] } },
 		default: false,
 		description: 'Whether to skip the automatic translation of the ticket',
+	},
+	// -- update: only the fields the user explicitly adds are sent (a defaulted
+	// options parameter must never silently reset an untouched ticket) -----------
+	{
+		displayName: 'Update Fields',
+		name: 'updateFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		displayOptions: { show: { ...SHOW_TICKET, operation: ['update'] } },
+		default: {},
+		description: 'Only the fields added here are changed; everything else on the ticket stays untouched',
+		options: [
+			{
+				displayName: 'Assignee Emails',
+				name: 'assigneeEmails',
+				type: 'string',
+				default: '',
+				description: 'Comma-separated email addresses to assign',
+			},
+			{
+				displayName: 'Delivery Mode',
+				name: 'deliveryMode',
+				type: 'options',
+				options: ['implementation', 'docs', 'review', 'admin', 'epic'].map((v) => ({ name: v, value: v })),
+				default: 'implementation',
+				description: 'Delivery mode of the ticket',
+			},
+			{
+				displayName: 'Description',
+				name: 'description',
+				type: 'string',
+				typeOptions: { rows: 6 },
+				default: '',
+				description: 'Ticket description (Markdown)',
+			},
+			{
+				displayName: 'Due Date',
+				name: 'dueDate',
+				type: 'string',
+				placeholder: 'YYYY-MM-DD',
+				default: '',
+				description: 'Due date (YYYY-MM-DD)',
+			},
+			{
+				displayName: 'Estimated Time (Minutes)',
+				name: 'estimatedTimeMinutes',
+				type: 'number',
+				typeOptions: { numberPrecision: 0 },
+				default: 0,
+				description: 'Estimated effort in minutes',
+			},
+			{
+				displayName: 'Label Names or IDs',
+				name: 'labelNames',
+				type: 'multiOptions',
+				typeOptions: { loadOptionsMethod: 'getLabelNames' },
+				default: [],
+				description: 'Labels to attach. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Milestone Name or ID',
+				name: 'milestoneId',
+				type: 'options',
+				typeOptions: { loadOptionsMethod: 'getMilestones' },
+				default: '',
+				description: 'Milestone of the ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Parent Ticket',
+				name: 'parentTicketId',
+				type: 'string',
+				default: '',
+				description: 'Parent ticket key or ID for sub-tickets',
+			},
+			{
+				displayName: 'Priority',
+				name: 'priority',
+				type: 'options',
+				options: ['blocker', 'high', 'normal', 'low', 'trivial'].map((v) => ({ name: v, value: v })),
+				default: 'normal',
+				description: 'Ticket priority',
+			},
+			{
+				displayName: 'Private',
+				name: 'isPrivate',
+				type: 'boolean',
+				default: false,
+				description: 'Whether the ticket is only visible to team members with access',
+			},
+			{
+				displayName: 'Skip Auto-Translate',
+				name: 'skipAutoTranslate',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to skip the automatic translation of the ticket',
+			},
+			{
+				displayName: 'Start Date',
+				name: 'startDate',
+				type: 'string',
+				placeholder: 'YYYY-MM-DD',
+				default: '',
+				description: 'Planned start date (YYYY-MM-DD)',
+			},
+			{
+				displayName: 'Status Name or ID',
+				name: 'statusId',
+				type: 'options',
+				typeOptions: { loadOptionsMethod: 'getStatuses' },
+				default: '',
+				description: 'Status to set (statuses come from the project). Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Type',
+				name: 'type',
+				type: 'options',
+				options: ['epic', 'story', 'task', 'bug'].map((v) => ({ name: v, value: v })),
+				default: 'task',
+				description: 'Ticket type',
+			},
+			{
+				displayName: 'Version Name or ID',
+				name: 'versionId',
+				type: 'options',
+				typeOptions: { loadOptionsMethod: 'getVersions' },
+				default: '',
+				description: 'Version of the ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+		],
 	},
 	// -- language + duplicate semantics (binding error-handling design) ----------
 	{
@@ -627,6 +756,37 @@ function collectTicketBody(
 	return body;
 }
 
+/**
+ * Builds the PATCH body for the update operation from the Update Fields
+ * collection. Only fields the user explicitly added are present in the
+ * collection, so whatever is present is sent as-is - including an explicit
+ * `false` for booleans (the only way to clear them) - and untouched ticket
+ * fields are never reset by a defaulted options parameter.
+ */
+export function buildUpdateBody(updateFields: IDataObject): IDataObject {
+	const body: IDataObject = {};
+	for (const field of ['description', 'type', 'priority', 'statusId', 'milestoneId', 'versionId', 'startDate', 'dueDate', 'deliveryMode'] as const) {
+		const value = updateFields[field];
+		if (typeof value === 'string' && value !== '') body[field] = value;
+	}
+	if (typeof updateFields.estimatedTimeMinutes === 'number' && updateFields.estimatedTimeMinutes > 0) {
+		body.estimatedTimeMinutes = updateFields.estimatedTimeMinutes;
+	}
+	for (const field of ['isPrivate', 'skipAutoTranslate'] as const) {
+		if (typeof updateFields[field] === 'boolean') body[field] = updateFields[field];
+	}
+	if (Array.isArray(updateFields.labelNames) && updateFields.labelNames.length > 0) {
+		body.labelNames = updateFields.labelNames;
+	}
+	if (typeof updateFields.assigneeEmails === 'string' && updateFields.assigneeEmails.trim() !== '') {
+		body.assigneeEmails = updateFields.assigneeEmails
+			.split(',')
+			.map((email) => email.trim())
+			.filter(Boolean);
+	}
+	return body;
+}
+
 export async function executeTicketOperation(
 	context: IExecuteFunctions,
 	itemIndex: number,
@@ -703,21 +863,9 @@ export async function executeTicketOperation(
 			case 'update': {
 				const ticketId = await resolveTicketId(client, project, ticket);
 				const allowLanguageMismatch = context.getNodeParameter('allowLanguageMismatch', itemIndex, false) as boolean;
-				const body = collectTicketBody(context, itemIndex, [
-					'description',
-					'type',
-					'priority',
-					'statusId',
-					'milestoneId',
-					'versionId',
-					'startDate',
-					'dueDate',
-					'estimatedTimeMinutes',
-					'isPrivate',
-					'deliveryMode',
-					'skipAutoTranslate',
-				]);
-				const parent = optionalString(context, 'parentTicketId', itemIndex);
+				const updateFields = context.getNodeParameter('updateFields', itemIndex, {}) as IDataObject;
+				const body = buildUpdateBody(updateFields);
+				const parent = typeof updateFields.parentTicketId === 'string' && updateFields.parentTicketId !== '' ? updateFields.parentTicketId : undefined;
 				if (parent) body.parentTicketId = await resolveTicketId(client, project, parent);
 				const updated = await client.request(`${ticketBase}/${ticketId}`, {
 					method: 'PATCH',
