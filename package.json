@@ -36,7 +36,8 @@
       "dist/credentials/orbotoApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/orboto/orboto.node.js"
+      "dist/nodes/orboto/orboto.node.js",
+      "dist/nodes/orboto/orbotoTrigger.node.js"
     ]
   },
   "scripts": {

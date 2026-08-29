@@ -1,13 +1,15 @@
 const { src, dest } = require('gulp');
 
 /**
- * Copies node/credential icons (SVG) from the source tree into `dist/`,
- * preserving the directory layout - the layout n8n expects after a plain
- * `tsc` compile. Icon paths referenced by node descriptions (e.g.
- * `file:orboto.svg`) resolve against these copies.
+ * Copies node/credential icons (SVG) into `dist/`, preserving the layout the
+ * tsc compile produces (dist/nodes/..., dist/credentials/...). Icon paths
+ * referenced by node descriptions (e.g. `file:orboto.svg`) resolve against
+ * the compiled node file's directory.
  */
 function buildIcons() {
-	return src(['nodes/**/*.svg', 'credentials/**/*.svg'], { allowEmpty: true }).pipe(dest('dist'));
+	return src(['nodes/**/*.svg', 'credentials/**/*.svg'], { allowEmpty: true }).pipe(
+		dest('dist/nodes'),
+	);
 }
 
 exports['build:icons'] = buildIcons;
