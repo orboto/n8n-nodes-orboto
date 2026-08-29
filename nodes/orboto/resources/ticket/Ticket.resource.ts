@@ -431,7 +431,7 @@ export const ticketOperations: INodeProperties[] = [
 		displayOptions: { show: { ...SHOW_TICKET, operation: ['query'] } },
 		default: '',
 		description:
-			'OQL query, for example: project = ONN and status = todo and assignee = me order by priority',
+			'OQL query, for example: project = ONN and status = TODO and assignee = me order by priority',
 	},
 	{
 		displayName: 'Syntax',

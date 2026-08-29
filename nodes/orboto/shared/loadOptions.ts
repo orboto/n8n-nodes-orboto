@@ -34,6 +34,12 @@ interface Version {
 	name: string;
 }
 
+interface Space {
+	id: string;
+	name: string;
+	key?: string;
+}
+
 function option(value: string, name: string): INodePropertyOptions {
 	return { value, name };
 }
@@ -107,4 +113,11 @@ export async function getVersions(this: ILoadOptionsFunctions): Promise<INodePro
 	const client = await getLoadOptionsClient(this);
 	const versions = await client.request<Version[]>(`/projects/${encodeURIComponent(projectId)}/versions`);
 	return pageItems<any>(versions).map((v) => option(v.id, v.name));
+}
+
+/** Wiki spaces (for the doc resource). */
+export async function getSpaces(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const client = await getLoadOptionsClient(this);
+	const spaces = await client.request<Space[]>('/spaces');
+	return pageItems<any>(spaces).map((s) => option(s.id, s.key ? `${s.key} - ${s.name}` : s.name));
 }

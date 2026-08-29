@@ -83,6 +83,20 @@ export async function resolveTicketId(
 }
 
 /**
+ * Resolves a project key (ONN) or id to the project id. Some routes
+ * (/projects/{id}/members) only accept ids, unlike the ticket routes.
+ */
+export async function resolveProjectId(
+	client: ApiClient,
+	project: string,
+): Promise<string> {
+	const value = project.trim();
+	if (isUuid(value)) return value;
+	const found = await client.request<{ id: string }>(`/projects/by-key/${encodeURIComponent(value)}`);
+	return found.id;
+}
+
+/**
  * Resolves a user-supplied milestone reference (UUID or key like `M-3`)
  * to the milestone id. UUIDs pass through untouched.
  */

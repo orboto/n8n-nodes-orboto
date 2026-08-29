@@ -1,5 +1,5 @@
 import type { IExecuteFunctions, INodeExecutionData, INodeProperties } from 'n8n-workflow';
-import { getClient, isUuid, jsonOutput, toNodeError } from '../../shared/GenericFunctions';
+import { getClient, isUuid, jsonOutput, resolveProjectId, toNodeError } from '../../shared/GenericFunctions';
 
 const SHOW = { resource: ['project'] };
 
@@ -77,16 +77,6 @@ export const projectOperations: INodeProperties[] = [
 		description: 'Project status',
 	},
 ];
-
-async function resolveProjectId(
-	client: import('../../shared/ApiClient').ApiClient,
-	project: string,
-): Promise<string> {
-	const value = project.trim();
-	if (isUuid(value)) return value;
-	const found = await client.request<{ id: string }>(`/projects/by-key/${encodeURIComponent(value)}`);
-	return found.id;
-}
 
 export async function executeProjectOperation(
 	context: IExecuteFunctions,
