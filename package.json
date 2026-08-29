@@ -1,0 +1,62 @@
+{
+  "name": "n8n-nodes-orboto",
+  "version": "0.1.0",
+  "description": "n8n community nodes for orboto - automate tickets, milestones, projects, docs and more from your workflows",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "orboto",
+    "project-management",
+    "tickets",
+    "automation"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "orboto",
+    "email": "hello@orboto.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orboto/n8n-nodes-orboto.git"
+  },
+  "homepage": "https://github.com/orboto/n8n-nodes-orboto#readme",
+  "bugs": {
+    "url": "https://github.com/orboto/n8n-nodes-orboto/issues"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "main": "dist/nodes/index.js",
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [],
+    "nodes": []
+  },
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint \"nodes/**/*.ts\" \"credentials/**/*.ts\" --no-error-on-unmatched-pattern && eslint package.json",
+    "lint:fix": "eslint \"nodes/**/*.ts\" \"credentials/**/*.ts\" --no-error-on-unmatched-pattern --fix",
+    "test": "vitest run",
+    "prepublishOnly": "npm run lint && npm run build && npm run test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.57.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-n8n-nodes-base": "^2.0.0",
+    "gulp": "^5.0.1",
+    "jsonc-eslint-parser": "^3.3.0",
+    "n8n-core": "^2.16.1",
+    "n8n-workflow": "^2.16.0",
+    "prettier": "^3.9.6",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.11"
+  }
+}
