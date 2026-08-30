@@ -11,7 +11,7 @@
     "automation"
   ],
   "license": "MIT",
-  "author": "Daniel Schemann <schemann@silentfuture.de>",
+  "author": "orboto <hello@orboto.io>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orboto/n8n-nodes-orboto.git"
