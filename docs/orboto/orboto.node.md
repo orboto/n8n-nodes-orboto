@@ -1,6 +1,6 @@
 # orboto node
 
-The **orboto** action node automates an [orboto](https://orboto.example.com) instance from n8n: tickets, milestones, projects, docs/wiki, time entries, users, labels, saved searches and the agent inbox.
+The **orboto** action node automates an [orboto](https://orboto.io) instance from n8n: tickets, milestones, projects, docs/wiki, time entries, users, labels, saved searches and the agent inbox.
 
 ## Credentials
 

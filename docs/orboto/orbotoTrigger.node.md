@@ -1,6 +1,6 @@
 # orboto Trigger node
 
-The **orboto Trigger** starts a workflow when events happen in an [orboto](https://orboto.example.com) project.
+The **orboto Trigger** starts a workflow when events happen in an [orboto](https://orboto.io) project.
 
 ## Setup
 

@@ -1,6 +1,6 @@
 # n8n-nodes-orboto
 
-[n8n](https://n8n.io) community nodes for [orboto](https://orboto.example.com) - automate tickets, milestones, projects, docs and more from your workflows.
+[n8n](https://n8n.io) community nodes for [orboto](https://orboto.io) - automate tickets, milestones, projects, docs and more from your workflows.
 
 [![CI](https://github.com/orboto/n8n-nodes-orboto/actions/workflows/ci.yml/badge.svg)](https://github.com/orboto/n8n-nodes-orboto/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-orboto.svg)](https://www.npmjs.com/package/n8n-nodes-orboto)
