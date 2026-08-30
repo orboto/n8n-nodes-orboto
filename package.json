@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-orboto",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "n8n community nodes for orboto - automate tickets, milestones, projects, docs and more from your workflows",
   "keywords": [
     "n8n-community-node-package",
